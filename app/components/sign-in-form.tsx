@@ -2,15 +2,53 @@
 
 import { useActionState } from "react";
 
-async function signIn(previousState, formData) {
-  console.log(previousState, formData);
-  return previousState + 1;
-}
+import { useLogin } from "@/app/hooks/auth";
+import { useFormState } from "react-dom";
+import { LoginSchema } from "../hooks/auth.validade";
+
+type FormLogin = {
+  status: string;
+  email?: string;
+  password?: string;
+  errors?: Record<string, Array<string>>;
+};
 
 function SignInForm() {
-  const [state, formAction] = useActionState(signIn, {
-    email: "",
-    password: "",
+  const { trigger } = useLogin();
+
+  const handleLogin = async (
+    _: FormLogin,
+    formData: FormData
+  ): Promise<FormLogin> => {
+    const response: FormLogin = {
+      status: "error",
+      password: "",
+      email: "",
+    };
+
+    const fields = LoginSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+
+    if (!fields.success)
+      return {
+        status: "error",
+        errors: fields.error.flatten().fieldErrors,
+      };
+
+    await trigger({
+      Username: fields.data.email,
+      Password: fields.data.password,
+    });
+
+    response.status = "success";
+
+    return response;
+  };
+
+  const [state, formAction, isPending] = useFormState(handleLogin, {
+    status: "initial",
   });
 
   return (
@@ -20,8 +58,9 @@ function SignInForm() {
           id="email"
           type="email"
           name="email"
+          readOnly={isPending}
           autoComplete="email"
-          placeholder=""
+          placeholder="Digite seu email"
           defaultValue={state.email}
         />
       </label>
@@ -29,13 +68,15 @@ function SignInForm() {
         <input
           id="password"
           type="password"
-          name="email"
+          name="password"
+          readOnly={isPending}
           autoComplete="current-password"
+          placeholder="Digite sua senha"
           defaultValue={state.password}
         />
       </label>
 
-      <button>Entrar</button>
+      <button disabled={isPending}>Entrar</button>
     </form>
   );
 }
