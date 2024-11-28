@@ -90,7 +90,6 @@ export default class CookieStorage implements ICognitoStorage {
 
       if (entries[index].length === 0) continue;
 
-
       const [
         name,
         value,

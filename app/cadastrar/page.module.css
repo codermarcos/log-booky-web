@@ -11,9 +11,25 @@
   align-items: center;
   justify-items: center;
   min-height: 100svh;
-  padding: 80px;
+  padding: 12px;
   gap: 64px;
   font-family: var(--font-geist-sans);
+}
+
+.page > header {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  display: flex;
+  grid-row-start: 2;
+}
+
+.main > form {
+  display: grid;
+  gap: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,21 +40,5 @@
 
     --button-primary-hover: #ccc;
     --button-secondary-hover: #1a1a1a;
-  }
-}
-
-.main {
-  display: flex;
-  grid-row-start: 2;
-}
-
-.main > .form {
-  display: flex;
-  gap: 32px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
   }
 }
